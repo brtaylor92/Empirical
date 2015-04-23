@@ -189,7 +189,7 @@ namespace emp {
     const auto size2 = in2.size();
 
     // Calculate by how much the strings overlap.
-    int overlap = std::min( size1 - offset,  size2 );
+    const auto overlap = std::min( size1 - offset,  size2 );
 
     // Initialize the distance to that part of the strings which do not overlap.
     int num_diffs = size1 + size2 - 2 * overlap;
