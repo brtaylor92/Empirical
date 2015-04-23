@@ -337,6 +337,6 @@ namespace emp {
 
 
 
-};
+}
 
 #endif

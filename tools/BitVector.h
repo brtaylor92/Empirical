@@ -507,6 +507,6 @@ namespace emp {
     return out;
   }
 
-};
+}
 
 #endif
