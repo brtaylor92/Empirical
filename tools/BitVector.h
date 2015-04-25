@@ -25,7 +25,17 @@ namespace emp {
     int32_t NumFields() const { return 1 + ((num_bits - 1) >> 5); }
     int32_t NumBytes() const { return  1 + ((num_bits - 1) >> 3); }
 
-    uint32_t * bit_set;
+#ifndef EMSCRIPTEN
+    typedef uint32_t bit_field;
+    #define FIELD_WIDTH 32
+    #define FIELD_POW_2 5
+#else
+    typedef uint64_t bit_field;
+    #define FIELD_WIDTH 64
+    #define FIELD_POW_2 6
+#endif
+    static constexpr int32_t FIELD_BYTE_WIDTH = FIELD_WIDTH/8;
+    bit_field * bit_set;
     
     // Setup a bit proxy so that we can use operator[] on bit sets as an lvalue.
     class BitProxy {
@@ -247,8 +257,7 @@ namespace emp {
         ((field_id+1 < NUM_FIELDS) ? bit_set[field_id+1] << (32-pos_id) : 0);
     }
 
-    template <int32_t OUT_BITS>
-    uint32_t GetValueAtBit(int32_t index) {
+    template <int32_t OUT_BITS>    uint32_t GetValueAtBit(int32_t index) {
       static_assert(OUT_BITS <= 32, "Requesting too many bits to fit in a UInt");
       return GetUIntAtBit(index) & UIntMaskLow(OUT_BITS);
     }
@@ -319,7 +328,16 @@ namespace emp {
       return bit_count;
     }
 
-    int32_t CountOnes() const { return CountOnes_Mixed(); }
+    int32_t CountOnes_BuiltIn() const {
+      const int32_t NUM_FIELDS = NumFields();
+      int32_t bit_count = 0;
+      for (int32_t i = 0; i < NUM_FIELDS; i++) {
+        bit_count += __builtin_popcount(bit_set[i]);
+      }
+      return bit_count;
+    }
+
+    int32_t CountOnes() const { return CountOnes_BuiltIn(); }
 
     int32_t FindBit() const {
       const int32_t NUM_FIELDS = NumFields();
