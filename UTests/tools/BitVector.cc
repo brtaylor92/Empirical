@@ -4,7 +4,7 @@
 #include "../../tools/command_line.h"
 #include "../../tools/BitVector.h"
 
-int main(int argc, char* argv[])
+int main(int32_t argc, char* argv[])
 {
   std::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
   const bool verbose = emp::cl::use_arg(args, "-v");
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     std::cout << "Shifting!" << std::endl;
   }
 
-  for (int i = 0; i < 75; i += 2) {
+  for (int32_t i = 0; i < 75; i += 2) {
     emp::BitVector shift_vector = bv80 >> i;
     if (verbose) {
       if (i < 10) std::cout << ' ';
@@ -46,7 +46,6 @@ int main(int argc, char* argv[])
                 << " : " << shift_vector.CountOnes()
                 << std::endl;
     }
-
     emp_assert((shift_vector.CountOnes() == 1) == (i <= 71));
   }
 
